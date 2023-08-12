@@ -6,13 +6,13 @@ plugins {
 android {
     signingConfigs {
         debug {
-            storeFile file('D:\\Project-github\\freezeitapp\\freezeitapp_key.jks')
+            storeFile file('..\\freezeitapp_key.jks')
             storePassword 'freezeit'
             keyAlias 'freezeit'
             keyPassword 'freezeit'
         }
         release {
-            storeFile file('D:\\Project-github\\freezeitapp\\freezeitapp_key.jks')
+            storeFile file('..\\freezeitapp_key.jks')
             storePassword 'freezeit'
             keyAlias 'freezeit'
             keyPassword 'freezeit'

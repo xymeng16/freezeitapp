@@ -16,11 +16,14 @@ import io.github.jark006.freezeit.hook.XpUtils;
 public class BroadCastHook {
     final static String TAG = "Freezeit[BroadCastHook]:";
     Config config;
-
+    private Integer gmsUid;
+    final static String GMS_PKG_NAME = "com.google.android.gms";
     Method skipReceiverLockedMethod;
 
     public BroadCastHook(Config config, ClassLoader classLoader) {
         this.config = config;
+        this.gmsUid = config.uidIndex.get(this.GMS_PKG_NAME);
+        XpUtils.log(TAG, "got gms uid: " + this.gmsUid);
 
         // 动态广播
         XpUtils.hookMethod(TAG, classLoader, registeredReceiverCallback,
@@ -82,6 +85,14 @@ public class BroadCastHook {
             if (!config.managedApp.contains(uid) || config.foregroundUid.contains(uid))
                 return;
 
+//            // if broadcast is from GMS then do not filter
+//            final int callerUid = config.getBroadcastRecordCallingUid(param.args[0]);
+//            XpUtils.log(TAG, "WTF?? callerUid=" + callerUid + ", gmsUid=" + gmsUid);
+//            if (callerUid == gmsUid.intValue()) {
+//                XpUtils.log(TAG, "Release broadcast from GMS (uid: )" + callerUid);
+//                return;
+//            }
+
             // https://cs.android.com/android/platform/superproject/+/master:frameworks/base/services/core/java/com/android/server/am/BroadcastQueue.java;l=946
             final var delivery = config.getBroadcastRecordDelivery(param.args[0]);
             if (delivery == null) return;
@@ -116,11 +127,19 @@ public class BroadCastHook {
             if (!config.managedApp.contains(uid) || config.foregroundUid.contains(uid))
                 return;
 
+
+
             try {
+                final int callerUid = config.getBroadcastRecordCallingUid(param.args[0]);
+                XpUtils.log(TAG, "WTF?? callerUid=" + callerUid + ", gmsUid=" + gmsUid);
+                if (callerUid == gmsUid.intValue()) {
+                    XpUtils.log(TAG, "Release broadcast from GMS (uid: )" + callerUid);
+                    return;
+                }
                 skipReceiverLockedMethod.invoke(param.thisObject, param.args[0]);
                 param.setResult(null);
                 if (XpUtils.DEBUG_BROADCAST) {
-                    final int callerUid = config.getBroadcastRecordCallingUid(param.args[0]);// broadcastRecord
+//                    final int callerUid = config.getBroadcastRecordCallingUid(param.args[0]);// broadcastRecord
                     XpUtils.log(TAG, "静态广播 清理: " +
                             config.pkgIndex.getOrDefault(callerUid, String.valueOf(callerUid)) +
                             " 发往 " +

@@ -11,10 +11,10 @@ import de.robv.android.xposed.XposedHelpers;
 import io.github.jark006.freezeit.Utils;
 
 public class XpUtils {
-    public final static boolean DEBUG_WAKEUP_LOCK = false;
-    public final static boolean DEBUG_BROADCAST = false;
-    public final static boolean DEBUG_ALARM = false;
-    public final static boolean DEBUG_ANR = false;
+    public final static boolean DEBUG_WAKEUP_LOCK = true;
+    public final static boolean DEBUG_BROADCAST = true;
+    public final static boolean DEBUG_ALARM = true;
+    public final static boolean DEBUG_ANR = true;
 
     public static boolean hookMethod(String TAG, ClassLoader classLoader, XC_MethodHook callback,
                                      String className, String methodName, Object... parameterTypes) {
